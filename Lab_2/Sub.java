@@ -18,10 +18,11 @@ public class Sub {
 
      	PilotProps pp = new PilotProps();
     	pp.loadPersistentValues();
+    	final int soundThreshold = 50;
     	float wheelDiameter = Float.parseFloat(pp.getProperty(PilotProps.KEY_WHEELDIAMETER, "4.96"));
     	float trackWidth = Float.parseFloat(pp.getProperty(PilotProps.KEY_TRACKWIDTH, "13.0"));
-    	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "A"));
-    	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "B"));
+    	RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "B"));
+    	RegulatedMotor rightMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_RIGHTMOTOR, "A"));
     	boolean reverse = Boolean.parseBoolean(pp.getProperty(PilotProps.KEY_REVERSE,"false"));
     
 
@@ -37,7 +38,7 @@ public class Sub {
          */
 		Behavior Drive = new Behavior(){
 			public boolean takeControl() {
-				return sound.readValue() <= 30;
+				return sound.readValue() <= soundThreshold;
 			}
 			
 			public void suppress() {
@@ -46,9 +47,10 @@ public class Sub {
 			
 			public void action() {
       			LCD.drawString("Status: DRIVE", 0, 0);
+      			LCD.drawString("" + sound.readValue(), 0, 1);
 
 				pilot.forward();
-                while(sound.readValue() <= 30) 
+                while(sound.readValue() <= soundThreshold) 
                 	Thread.yield(); //action complete when not on line
 			}					
 		};
@@ -57,7 +59,7 @@ public class Sub {
 			private boolean suppress = false;
 			
 			public boolean takeControl() {
-				return sound.readValue() > 30;
+				return sound.readValue() > soundThreshold;
 			}
 
 			public void suppress() {
@@ -66,6 +68,7 @@ public class Sub {
 			
 			public void action() {
       			LCD.drawString("Status: BACK", 0, 0);
+      			LCD.drawString("" + sound.readValue(), 0, 1);
 
 				while (!suppress) {
 					pilot.backward();
