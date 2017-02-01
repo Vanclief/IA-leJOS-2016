@@ -3,7 +3,6 @@ import lejos.nxt.LCD;
 import lejos.nxt.LightSensor;
 import lejos.nxt.UltrasonicSensor;
 import lejos.nxt.SoundSensor;
-import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.DifferentialPilot;
@@ -46,6 +45,8 @@ public class Sub {
 			}
 			
 			public void action() {
+      			LCD.drawString("Status: DRIVE", 0, 0);
+
 				pilot.forward();
                 while(sound.readValue() <= 30) 
                 	Thread.yield(); //action complete when not on line
@@ -64,6 +65,8 @@ public class Sub {
 			}
 			
 			public void action() {
+      			LCD.drawString("Status: BACK", 0, 0);
+
 				while (!suppress) {
 					pilot.backward();
 					while (!suppress && pilot.isMoving()) 
