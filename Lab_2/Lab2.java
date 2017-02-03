@@ -25,7 +25,7 @@ public class Lab2 {
 
     final Random random = new Random();
 
-    final int soundThreshold = 50;
+    final int soundThreshold = 60;
 
     // Motors
     final RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "C"));
@@ -119,6 +119,7 @@ public class Lab2 {
         LCD.drawString("SCARED", 0, 0);
         LCD.drawString("Im scared of", 0, 1);
         LCD.drawString("sounds. ", 0, 2);
+        LCD.drawString("S: " + sound.readValue(), 0, 3);
 
         // While the behavior is still running, go backward and try going any of both sides
         while (!suppress) {
