@@ -132,7 +132,7 @@ public class Sub {
 
     };
 
-    Behavior[] behaviors = {MoveBack, Drive};
+    Behavior[] behaviors = {MoveBack, Drive, RunFromSound};
     Button.waitForAnyPress();
     (new Arbitrator(behaviors)).start();
   }
