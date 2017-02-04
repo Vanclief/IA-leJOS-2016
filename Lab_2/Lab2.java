@@ -25,7 +25,7 @@ public class Lab2 {
 
     final Random random = new Random();
 
-    final int soundThreshold = 60;
+    final int soundThreshold = 30;
 
     // Motors
     final RegulatedMotor leftMotor = PilotProps.getMotor(pp.getProperty(PilotProps.KEY_LEFTMOTOR, "C"));
@@ -69,14 +69,25 @@ public class Lab2 {
         // LCD.drawString("light: " + light.readValue(), 0, 1);
 
         lightIntensities[0] = light.readValue();
+
         pilot.rotate(45);
+        while(pilot.isMoving() && !suppressed) {
+          Thread.yield();
+        }
+
         lightIntensities[1] = light.readValue();
+
         pilot.rotate(-90);
+        while(pilot.isMoving() && !suppressed) {
+          Thread.yield();
+        }
+
         lightIntensities[2] = light.readValue();
 
         if (lightIntensities[0] <= lightIntensities[1] && lightIntensities[0] <= lightIntensities[2]) {
           LCD.drawString("CENTER", 0, 1);
           pilot.rotate(45);
+
         } else {
           if (lightIntensities[1] <= lightIntensities[0] && lightIntensities[1] <= lightIntensities[2]) {
             LCD.drawString("LEFT", 0, 1);
@@ -84,6 +95,10 @@ public class Lab2 {
           } else {
             LCD.drawString("RIGHT", 0, 1);
           }
+        }
+
+        while(pilot.isMoving() && !suppressed) {
+          Thread.yield();
         }
 
         pilot.travel(5, true);
@@ -102,7 +117,7 @@ public class Lab2 {
     // SECOND MOST IMPORTANT BEHAVIOR
     // RUN FROM SOUND -----------------------------------------------------------------------------
     Behavior RunFromSound = new Behavior(){
-      private boolean suppress = false;
+      private boolean suppressed = false;
 
       // This behavior should be triggered if the sound value exceds the soundThreshold
       public boolean takeControl() {
@@ -111,24 +126,24 @@ public class Lab2 {
 
       // If this behavior stops, stop moving
       public void suppress() {
-        suppress = true;
+        suppressed = true;
       }
 
       public void action() {
 
-        LCD.drawString("SCARED", 0, 0);
-        LCD.drawString("Im scared of", 0, 1);
-        LCD.drawString("sounds. ", 0, 2);
-        LCD.drawString("S: " + sound.readValue(), 0, 3);
-
-        // While the behavior is still running, go backward and try going any of both sides
-        while (!suppress) {
+          LCD.drawString("SCARED", 0, 0);
+          LCD.drawString("Im scared of", 0, 1);
+          LCD.drawString("sounds. ", 0, 2);
+          LCD.drawString("S: " + sound.readValue(), 0, 3);
 
           // Beep since its a little ~bitch~ mousey mousey
           Sound.beepSequence();
 
           // Go back
           pilot.travel(-5 - random.nextInt(5));
+          while(pilot.isMoving() && !suppressed) {
+            Thread.yield();
+          }
 
           // Get a random direction
           int angle = 60 + random.nextInt(60);
@@ -137,9 +152,10 @@ public class Lab2 {
           // Rotate
           pilot.rotate(-side * angle);
 
-          while (!suppress && pilot.isMoving())
+          while(pilot.isMoving() && !suppressed) {
             Thread.yield();
-        }
+          }
+      
         LCD.clear();
       }
     };
